@@ -1,0 +1,44 @@
+name: Docker to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Kodni yuklash
+        uses: actions/checkout@v4
+
+      - name: SSH kalitni sozlash
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Serverga deploy qilish
+        env:
+          HOST: ${{ secrets.HOST }}
+          USER: ${{ secrets.USERNAME }}
+          PORT: ${{ secrets.PORT }}
+          APP_DIR: /ci_cd
+        run: |
+          ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
+
+          ssh $USER@$HOST << 'EOF'
+            if [ ! -d /ci_cd ]; then
+              git clone https://github.com/shokhDeveloper/test-cd.git /ci_cd
+              cd /ci_cd
+              echo "PORT=${PORT}" > .env
+            else
+              cd /ci_cd
+              git pull origin main
+            fi
+
+            npm install
+            npm run build
+            pm2 restart dist/main.js || pm2 start dist/main.js
+          EOF
