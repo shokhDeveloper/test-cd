@@ -1,0 +1,12 @@
+name: Test
+on: push
+jobs:
+    lint: 
+      runs-on: ubunto-latest
+      steps: 
+        - name: Checkout
+          uses: actions/checkout@v6
+        - name: Install
+          run: npm ci
+        - name: Lint
+          run: npm run lint
