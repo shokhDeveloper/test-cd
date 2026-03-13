@@ -2,7 +2,7 @@ name: Test
 on: push
 jobs:
     lint: 
-      runs-on: ubunto-latest
+      runs-on: ubuntu-latest
       steps: 
         - name: Checkout
           uses: actions/checkout@v4
