@@ -5,7 +5,7 @@ jobs:
       runs-on: ubunto-latest
       steps: 
         - name: Checkout
-          uses: actions/checkout@v6
+          uses: actions/checkout@v4
         - name: Install
           run: npm ci
         - name: Lint
